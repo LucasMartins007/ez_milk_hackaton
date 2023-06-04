@@ -1,0 +1,66 @@
+app:
+  name: ez-milk
+  version: "1.0.0"
+
+api:
+  app-name: ${app.name}
+  path: /api
+  version: /v1
+  base-path: /${api.app-name}${api.path}${api.version}
+
+database-config:
+  dev:
+    server: localhost
+    port: 5432
+    name: ez_milk_hackaton
+    username: lucas
+    password: admin
+
+hibernate-config:
+  dev:
+    format-sql: true
+    show-sql: true
+    generate-ddl: true
+    ddl-auto: update
+
+
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: ${app.name}
+
+  flyway:
+    locations: "classpath:/db/migration"
+    schemas: migration
+    validate-on-migrate: true
+
+
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      properties:
+        hibernate:
+          format_sql: true
+          dialect: ${spring.jpa.database-platform}
+          temp.use_jdbc_metadata_defaults: false
+          enable_lazy_load_no_trans: true
+        query:
+          in_clause_parameter_padding: true
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost:5432/ez_milk_hackaton
+    username: lucas
+    password: admin
+
+server:
+  port: 8080
+  servlet:
+    context-path: ${api.base-path}
