@@ -1,9 +1,10 @@
 package com.hackaton.ezmilk.service;
 
 import com.hackaton.ezmilk.model.Rebanho;
+import com.hackaton.ezmilk.model.dto.RebanhoDTO;
 
 public interface RebanhoService {
     Rebanho findByPessoa(Integer pessoaId);
 
-    void atualizarRebanho(Integer pessoaId, Integer rebanhoId, Rebanho rebanho);
+    RebanhoDTO atualizarRebanho(Integer pessoaId, Integer rebanhoId, Rebanho rebanho);
 }

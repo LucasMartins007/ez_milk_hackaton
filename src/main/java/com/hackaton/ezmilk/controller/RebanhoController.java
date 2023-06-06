@@ -22,7 +22,7 @@ public class RebanhoController {
     }
 
     @PutMapping("/{pessoaId}/atualizar/{rebanhoId}")
-    public void updateRebanho(@PathVariable("pessoaId") Integer pessoaId, @PathVariable("rebanhoId") Integer rebanhoId, @RequestBody RebanhoDTO rebanhoDTO) {
-        rebanhoService.atualizarRebanho(pessoaId, rebanhoId, modelMapper.map(rebanhoDTO, Rebanho.class));
+    public RebanhoDTO updateRebanho(@PathVariable("pessoaId") Integer pessoaId, @PathVariable("rebanhoId") Integer rebanhoId, @RequestBody RebanhoDTO rebanhoDTO) {
+        return rebanhoService.atualizarRebanho(pessoaId, rebanhoId, modelMapper.map(rebanhoDTO, Rebanho.class));
     }
 }

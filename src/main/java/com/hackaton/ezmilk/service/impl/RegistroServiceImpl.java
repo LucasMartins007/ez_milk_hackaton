@@ -76,7 +76,13 @@ public class RegistroServiceImpl implements RegistroService {
 
         final BigDecimal somaTotal = calcularSomaTotalDosRegistros(registros);
         historicoDTO.setSaldoFinal(somaTotal);
-        registros.forEach(registro -> gerarRegistroDTO(historicoDTO, somaTotal, registro));
+
+        final BigDecimal entradas = registros.stream()
+                .filter(Registro::isEntrada)
+                .map(Registro::getPreco)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        registros.forEach(registro -> gerarRegistroDTO(historicoDTO, entradas, registro));
 
         return historicoDTO;
     }
@@ -103,17 +109,17 @@ public class RegistroServiceImpl implements RegistroService {
 
     }
 
-    private void gerarRegistroDTO(HistoricoDTO historicoDTO, BigDecimal somaTotal, Registro registro) {
+    private void gerarRegistroDTO(HistoricoDTO historicoDTO, BigDecimal entradas, Registro registro) {
         final RegistroDTO registroDTO = new RegistroDTO();
         BigDecimal porcentagem = BigDecimal.ZERO;
-        if (registro.getPreco().compareTo(BigDecimal.ZERO) != 0 && somaTotal.compareTo(BigDecimal.ZERO) != 0 && !registro.isEntrada()) {
+        if (registro.getPreco().compareTo(BigDecimal.ZERO) != 0 && entradas.compareTo(BigDecimal.ZERO) != 0 && !registro.isEntrada()) {
             porcentagem = registro.getPreco()
                     .multiply(BigDecimal.valueOf(100L))
-                    .divide(somaTotal, RoundingMode.FLOOR)
+                    .divide(entradas, RoundingMode.FLOOR)
                     .abs();
         }
 
-        registroDTO.setPorcentagem(porcentagem);
+        registroDTO.setPorcentagem(registro.isEntrada() ? null : porcentagem);
         registroDTO.setDataRegistro(registro.getDataRegistro());
         registroDTO.setEntrada(registro.getTipoRegistro().isEntrada());
         registroDTO.setTipoRegistro(modelMapper.map(registro.getTipoRegistro(), TipoRegistroDTO.class));

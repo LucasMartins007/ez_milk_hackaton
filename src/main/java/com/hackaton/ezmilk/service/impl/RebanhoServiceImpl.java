@@ -3,10 +3,12 @@ package com.hackaton.ezmilk.service.impl;
 import com.hackaton.ezmilk.exception.DomainException;
 import com.hackaton.ezmilk.model.Pessoa;
 import com.hackaton.ezmilk.model.Rebanho;
+import com.hackaton.ezmilk.model.dto.RebanhoDTO;
 import com.hackaton.ezmilk.repository.PessoaRepository;
 import com.hackaton.ezmilk.repository.RebanhoRepository;
 import com.hackaton.ezmilk.service.RebanhoService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +19,8 @@ public class RebanhoServiceImpl implements RebanhoService {
 
     private final PessoaRepository pessoaRepository;
 
+    private final ModelMapper modelMapper;
+
     @Override
     public Rebanho findByPessoa(Integer pessoaId) {
         final Pessoa pessoa = pessoaRepository.findById(pessoaId)
@@ -26,7 +30,7 @@ public class RebanhoServiceImpl implements RebanhoService {
     }
 
     @Override
-    public void atualizarRebanho(Integer pessoaId, Integer rebanhoId, Rebanho rebanho) {
+    public RebanhoDTO atualizarRebanho(Integer pessoaId, Integer rebanhoId, Rebanho rebanho) {
         final Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new DomainException("Pessoa não existe."));
 
@@ -36,6 +40,7 @@ public class RebanhoServiceImpl implements RebanhoService {
         }
         rebanho.setId(managedRebanho.getId());
         rebanho.setPessoa(managedRebanho.getPessoa());
-        rebanhoRepository.save(rebanho);
+        rebanho.setQuantidadeTotal(rebanho.getBezerra() + rebanho.getNovilha() + rebanho.getSeca() + rebanho.getLactacao());
+        return modelMapper.map(rebanhoRepository.save(rebanho), RebanhoDTO.class);
     }
 }

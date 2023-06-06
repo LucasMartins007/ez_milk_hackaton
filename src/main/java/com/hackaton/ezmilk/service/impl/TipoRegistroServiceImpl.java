@@ -34,6 +34,7 @@ public class TipoRegistroServiceImpl implements TipoRegistroService {
         final Pessoa pessoa = pessoaRepository.findById(pessoaid)
                 .orElseThrow(() -> new DomainException("Pessoa não existe"));
         return tipoRegistro.stream()
+                .filter(tr -> !tr.isEntrada())
                 .map(tr -> {
                     final List<Registro> registros = registroRepository.findAllByPessoaIdAndTipoRegistro(pessoa, tr);
 
